@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth Test</title>
+</head>
+<body>
+    <h1>Authentication Test Page</h1>
+    <p>This is a simple test page to verify the application is running properly.</p>
+    
+    <h2>Steps to test:</h2>
+    <ol>
+        <li>Go to <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></li>
+        <li>Try logging in as admin user</li>
+        <li>Check browser console for debug logs</li>
+        <li>Try logging out and back in</li>
+        <li>Verify role-based routing works</li>
+    </ol>
+    
+    <h2>Expected behavior:</h2>
+    <ul>
+        <li>Admin users should see admin dashboard at <code>/admin/dashboard</code></li>
+        <li>Employee users should see employee dashboard at <code>/dashboard</code></li>
+        <li>Logout should work in both normal and private browsers</li>
+        <li>No infinite redirect loops</li>
+    </ul>
+    
+    <p><strong>Note:</strong> Check the browser console for detailed debug logs to troubleshoot any issues.</p>
+</body>
+</html>
