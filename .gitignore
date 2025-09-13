@@ -29,6 +29,11 @@ yarn-error.log*
 .env
 .env*.local
 !.env.example
+!.env.development
+
+# Supabase environment files (keep examples, ignore actual keys)
+!supabase/.env.staging
+!supabase/.env.production
 
 # Vercel
 .vercel

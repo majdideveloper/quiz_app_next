@@ -1,0 +1,43 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["yyz1"],
+  "env": {
+    "NEXT_PUBLIC_APP_NAME": "Canadian Employee Quiz App"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_APP_ENV": "@next_public_app_env",
+      "NEXT_PUBLIC_SUPABASE_URL": "@next_public_supabase_url", 
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@next_public_supabase_anon_key",
+      "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_role_key",
+      "NEXT_PUBLIC_APP_URL": "@next_public_app_url",
+      "NEXT_PUBLIC_ENABLE_ANALYTICS": "@next_public_enable_analytics"
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        }
+      ]
+    }
+  ]
+}

@@ -3,10 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cp .env.development .env.local 2>/dev/null || true && next dev",
+    "dev:remote": "next dev",
     "build": "next build",
+    "build:staging": "NEXT_PUBLIC_APP_ENV=staging next build",
+    "build:production": "NEXT_PUBLIC_APP_ENV=production next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:reset": "supabase db reset",
+    "supabase:gen-types": "supabase gen types typescript --local > src/types/supabase.ts",
+    "supabase:status": "supabase status"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
