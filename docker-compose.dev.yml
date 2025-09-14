@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database - most essential service
+  supabase-db:
+    image: postgres:15
+    container_name: quiz-app-db
+    environment:
+      POSTGRES_PASSWORD: your-super-secret-and-long-postgres-password
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - supabase-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  supabase-db-data:
+
+networks:
+  default:
+    name: quiz-app-network

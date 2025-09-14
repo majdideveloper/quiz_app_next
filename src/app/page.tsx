@@ -1,9 +1,16 @@
 'use client'
 
-import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import LandingLayout from '@/components/landing/LandingLayout'
+import Hero from '@/components/landing/Hero'
+import Features from '@/components/landing/Features'
+import Benefits from '@/components/landing/Benefits'
+import Testimonials from '@/components/landing/Testimonials'
+import Pricing from '@/components/landing/Pricing'
+import FAQ from '@/components/landing/FAQ'
+import CTA from '@/components/landing/CTA'
 
 export default function Home() {
   const { user, profile, loading } = useAuth()
@@ -33,25 +40,8 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center' 
-      }}>
-        <div style={{
-          width: '8rem',
-          height: '8rem',
-          border: '2px solid #e5e7eb',
-          borderTopColor: '#2563eb',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
-        }}></div>
-        <style jsx>{`
-          @keyframes spin {
-            to { transform: rotate(360deg); }
-          }
-        `}</style>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
       </div>
     )
   }
@@ -60,67 +50,16 @@ export default function Home() {
     return null // Will redirect based on role
   }
 
+  // Show landing page for unauthenticated users
   return (
-    <main style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      backgroundColor: '#f9fafb'
-    }}>
-      <div style={{ 
-        maxWidth: '28rem', 
-        width: '100%', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        gap: '2rem' 
-      }}>
-        <div>
-          <h1 style={{ 
-            fontSize: '1.875rem', 
-            fontWeight: 'bold', 
-            textAlign: 'center', 
-            color: '#111827' 
-          }}>
-            🧠 Quiz App
-          </h1>
-          <p style={{ 
-            marginTop: '0.5rem', 
-            textAlign: 'center', 
-            color: '#6b7280' 
-          }}>
-            Canadian Employee Training Platform
-          </p>
-        </div>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <Link 
-            href="/auth/login" 
-            className="btn-primary"
-            style={{ 
-              width: '100%', 
-              display: 'block', 
-              textAlign: 'center',
-              textDecoration: 'none'
-            }}
-          >
-            Sign In
-          </Link>
-          
-          <Link 
-            href="/auth/register" 
-            className="btn-secondary"
-            style={{ 
-              width: '100%', 
-              display: 'block', 
-              textAlign: 'center',
-              textDecoration: 'none'
-            }}
-          >
-            Create Account
-          </Link>
-        </div>
-      </div>
-    </main>
+    <LandingLayout>
+      <Hero />
+      <Features />
+      <Benefits />
+      <Testimonials />
+      <Pricing />
+      <FAQ />
+      <CTA />
+    </LandingLayout>
   )
 }

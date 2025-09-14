@@ -87,6 +87,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       href: '/admin/analytics',
       icon: '📊',
       description: 'View performance analytics'
+    },
+    {
+      name: 'FAQ Management',
+      href: '/admin/faqs',
+      icon: '❓',
+      description: 'Manage landing page FAQs'
     }
   ] : []
 
