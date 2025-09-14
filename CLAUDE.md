@@ -5,10 +5,28 @@ Canadian employee quiz app using Next.js 15.5.3, Supabase, and Tailwind CSS v4. 
 
 ## Development Commands
 ```bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm run start    # Start production server
-npm run lint     # Run ESLint
+# Development
+npm run dev                # Start Next.js development server (local Supabase)
+npm run dev:staging        # Start with staging environment
+npm run dev:production     # Start with production environment
+
+# Build & Production
+npm run build              # Build for production
+npm run start              # Start production server
+npm run lint               # Run ESLint
+npm run type-check         # TypeScript validation
+
+# Local Supabase Management
+npm run supabase:start     # Start local Supabase services
+npm run supabase:stop      # Stop local Supabase services
+npm run supabase:restart   # Restart local Supabase services
+npm run supabase:status    # Check local Supabase status
+npm run supabase:studio    # Open Supabase Studio (database management)
+
+# Database Operations
+npm run db:migrate         # Apply database migrations
+npm run db:seed            # Seed database with test data
+npm run db:reset           # Reset database with fresh migrations
 ```
 
 ## Project Structure
@@ -91,6 +109,21 @@ npm run lint     # Run ESLint
 - **Robust Error Handling**: Fuzzy slug matching and graceful fallbacks for blog post retrieval
 - **Category Management**: Color-coded category badges and filtering system
 
+## Phase 6 Features Completed ✅
+1. ✅ Professional SaaS Landing Page
+2. ✅ Dynamic FAQ Management System
+3. ✅ Bilingual Landing Page Content
+4. ✅ Admin FAQ Management Interface
+5. ✅ Landing Page Integration with Dynamic FAQs
+
+## Phase 6 Implementation Details
+- **SaaS Landing Page**: Complete professional landing page with Canadian compliance focus, featuring hero section, features showcase, benefits presentation, testimonials, pricing plans, and call-to-action sections
+- **Dynamic FAQ System**: Full CRUD FAQ management with admin interface, bilingual support, real-time updates, search/filtering, drag & drop reordering, and publish/unpublish functionality
+- **Landing Page Components**: Modular component architecture with Navigation, Hero, Features, Benefits, Testimonials, Pricing, FAQ, CTA, and Footer components
+- **Bilingual Integration**: Complete French translations for all landing page and FAQ content with language switcher
+- **Admin FAQ Interface**: Comprehensive management dashboard at `/admin/faqs` with statistics, modal forms, and list management
+- **Database Integration**: FAQ table with RLS policies, bilingual fields, and proper indexing for performance
+
 ## Database Schema (Supabase)
 - profiles: User profiles extending auth.users
 - courses: Course content and metadata  
@@ -100,6 +133,7 @@ npm run lint     # Run ESLint
 - course_enrollments: User course progress
 - certificates: Generated completion certificates
 - posts: Blog posts with rich content and categories
+- faqs: FAQ entries with bilingual support and admin management
 
 ## Recent Technical Improvements ✅
 - **Next.js 15 Route Parameters**: Updated all components to use `React.use()` for async params handling
@@ -110,6 +144,10 @@ npm run lint     # Run ESLint
 - **Form Validation**: Updated BlogPostForm to work without published field until migration is applied
 - **Error Handling**: Comprehensive error boundaries and user-friendly error messages
 - **Performance**: Optimized database queries with separate author fetching
+- **FAQ Database Migration**: Applied FAQ table migration with proper RLS policies and bilingual support
+- **Client-Side Security**: Updated FAQ admin functions to use regular Supabase client instead of service role key
+- **Authentication Integration**: Fixed created_by field handling in FAQ creation with proper user authentication
+- **Component Import Issues**: Resolved ProtectedRoute import/export mismatches
 
 ## Known Limitations & Migration Path
 - **Published Column**: Blog posts currently don't support draft functionality (requires database migration)
@@ -122,6 +160,65 @@ To enable full blog functionality with draft/published support:
 1. Apply the database migration: `supabase/migrations/20240107000001_add_post_published_status.sql`
 2. Re-enable published filtering in blog queries
 3. Update BlogPostForm to include publishing options
+
+## FAQ System Implementation ✅
+### Database Layer
+- **FAQ Table**: Complete table with bilingual fields (question, answer, question_fr, answer_fr)
+- **RLS Policies**: Admin-only create/update/delete, public read access to published FAQs
+- **Indexing**: Performance optimized with proper indexes on published status and order
+- **Migration Applied**: `20240108000001_add_faqs_table.sql` successfully deployed
+
+### Backend Integration
+- **Supabase Functions**: Full CRUD operations using regular client with proper authentication
+- **TypeScript Support**: Complete FAQ interface with bilingual field typing
+- **Real-time Updates**: Live synchronization of FAQ changes via Supabase subscriptions
+- **Authentication Flow**: Proper user authentication integration for admin operations
+
+### Frontend Implementation
+- **Admin Interface**: Complete management dashboard at `/admin/faqs` with statistics and CRUD operations
+- **Dynamic Landing Page**: FAQ section automatically displays published FAQs with language support
+- **React Hooks**: Custom hooks (useFAQs, useAdminFAQs, usePublicFAQs) for data management
+- **Component Architecture**: Modular FAQ components (FAQManager, FAQForm, FAQ display)
+- **Bilingual Support**: Full French translations integrated with translation system
+
+### User Experience Features
+- **Search & Filtering**: Admin can search and filter FAQs by status (published/draft)
+- **Drag & Drop Reordering**: Visual FAQ ordering with immediate persistence
+- **Publish/Unpublish Toggle**: One-click status changes with visual feedback
+- **Modal Forms**: Clean create/edit experience with tabbed bilingual content
+- **Loading States**: Proper loading indicators and error handling throughout
+- **Fallback System**: Graceful degradation to static FAQs if dynamic loading fails
+
+## Development Environment Setup ✅
+
+### Local Development Configuration
+- ✅ **Supabase CLI**: Installed via npm as dev dependency
+- ✅ **Local Supabase Stack**: Running on ports 54321-54324
+  - API URL: http://127.0.0.1:54321
+  - Studio URL: http://127.0.0.1:54323 (database management)
+  - Database URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+- ✅ **Environment Files**: Multi-environment setup with branch-specific configs
+  - `.env.development.local` - Local Supabase development
+  - `.env.staging` - Staging environment 
+  - `.env.production` - Production environment
+
+### Branch Strategy
+- **main**: Production-ready code
+- **staging**: Pre-production testing
+- **development**: Active development work
+
+### Local Development Workflow
+1. `npm run supabase:start` - Start local Supabase services
+2. `npm run dev` - Start Next.js with local Supabase
+3. Visit http://localhost:3000 for the app
+4. Visit http://127.0.0.1:54323 for database management
+
+## Recent Local Development Setup ✅
+- **Supabase CLI Integration**: Installed Supabase CLI as npm dev dependency to avoid Docker network issues
+- **Local Environment Configuration**: Fixed environment variable loading priority issues
+- **Multi-Environment Support**: Created separate environment files for development, staging, and production branches
+- **Database Management Scripts**: Added npm scripts for local Supabase management and database operations
+- **Branch-Based Development**: Configured development workflow with proper branch strategy
 
 ## Canadian Compliance Requirements
 - Bilingual support (EN/FR) with complete translation infrastructure

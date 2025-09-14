@@ -82,3 +82,16 @@ export interface Post {
   category?: string;
   published?: boolean;
 }
+
+export interface FAQ {
+  id: string
+  question: string
+  answer: string
+  question_fr?: string | null
+  answer_fr?: string | null
+  order_index: number
+  is_published: boolean
+  created_by: string
+  created_at: string
+  updated_at: string
+}
