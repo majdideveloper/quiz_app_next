@@ -25,56 +25,71 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const loadProfile = async (userId: string, retryCount = 0) => {
       try {
         console.log(`Loading profile for user: ${userId} (attempt ${retryCount + 1})`)
-        
+
         const { data: profile, error } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', userId)
           .single()
-        
+
         if (error) {
           console.error('Error loading profile:', error)
           // If profile doesn't exist, create it (fallback)
-          if (error.code === 'PGRST116' && retryCount < 3) {
+          if (error.code === 'PGRST116' && retryCount < 2) {
             console.log(`Profile not found, retrying in ${(retryCount + 1) * 500}ms...`)
             setTimeout(() => loadProfile(userId, retryCount + 1), (retryCount + 1) * 500)
             return
           } else {
             console.error('Failed to load profile after retries')
             setProfile(null)
+            setLoading(false) // Stop loading even on error
           }
         } else {
-          console.log('Profile loaded successfully:', { 
-            id: profile.id, 
-            email: profile.email, 
-            role: profile.role, 
-            full_name: profile.full_name 
+          console.log('Profile loaded successfully:', {
+            id: profile.id,
+            email: profile.email,
+            role: profile.role,
+            full_name: profile.full_name
           })
           setProfile(profile)
+          setLoading(false)
         }
       } catch (err) {
         console.error('Profile loading error:', err)
-        if (retryCount < 3) {
+        if (retryCount < 2) {
           console.log(`Retrying profile load due to error in ${(retryCount + 1) * 500}ms...`)
           setTimeout(() => loadProfile(userId, retryCount + 1), (retryCount + 1) * 500)
         } else {
           setProfile(null)
+          setLoading(false) // Stop loading even on error
         }
       }
     }
 
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
-      
-      if (session?.user) {
-        await loadProfile(session.user.id)
-      } else {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        setUser(session?.user ?? null)
+
+        if (session?.user) {
+          await loadProfile(session.user.id)
+        } else {
+          setProfile(null)
+          setLoading(false)
+        }
+      } catch (err) {
+        console.error('Session error:', err)
+        setUser(null)
         setProfile(null)
+        setLoading(false)
       }
-      
-      setLoading(false)
     }
+
+    // Set a maximum timeout to prevent infinite loading
+    const loadingTimeout = setTimeout(() => {
+      console.warn('Auth loading timeout - stopping loading state')
+      setLoading(false)
+    }, 10000) // 10 seconds max
 
     getSession()
 
@@ -101,7 +116,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      clearTimeout(loadingTimeout)
+      subscription.unsubscribe()
+    }
   }, [])
 
   const signIn = async (email: string, password: string) => {

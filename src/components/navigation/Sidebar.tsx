@@ -230,27 +230,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
           </nav>
 
-          {/* Footer */}
-          <div className="p-6 border-t border-gray-200">
-            <div className="space-y-2">
-              <Link
-                href="/profile"
-                onClick={onClose}
-                className="flex items-center p-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <span className="text-xl mr-3">👤</span>
-                <span className="font-medium">{t('nav.profile')}</span>
-              </Link>
-              
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center p-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <span className="text-xl mr-3">🚪</span>
-                <span className="font-medium">{t('nav.logout')}</span>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </>

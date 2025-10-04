@@ -28,12 +28,13 @@ yarn-error.log*
 # Local env files
 .env
 .env*.local
+.env.staging
+.env.production
 !.env.example
 !.env.development
 
 # Supabase environment files (keep examples, ignore actual keys)
-!supabase/.env.staging
-!supabase/.env.production
+.supabase
 
 # Vercel
 .vercel
@@ -165,6 +166,10 @@ test-db.js
 *.backup
 *.bak
 *.orig
+
+# Migration and SQL files with sensitive data
+combined_migration.sql
+safe_migration.sql
 
 # Database dumps
 *.sql.backup

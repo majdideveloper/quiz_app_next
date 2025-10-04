@@ -1,57 +1,158 @@
 'use client'
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
-import { useAuth } from '@/hooks/useAuth'
 import Link from 'next/link'
-import { Users, BookOpen, FileText, BarChart3, LogOut, Plus } from 'lucide-react'
+import { Users, BookOpen, FileText, BarChart3, Plus } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase/client'
+
+interface DashboardStats {
+  totalUsers: number
+  activeCourses: number
+  totalQuizzes: number
+  completionRate: number
+}
+
+interface RecentActivity {
+  type: 'user' | 'course' | 'quiz'
+  message: string
+  details: string
+}
 
 export default function AdminDashboardPage() {
-  const { profile, signOut } = useAuth()
+  const [stats, setStats] = useState<DashboardStats>({
+    totalUsers: 0,
+    activeCourses: 0,
+    totalQuizzes: 0,
+    completionRate: 0
+  })
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchDashboardStats()
+    fetchRecentActivity()
+  }, [])
+
+  const fetchDashboardStats = async () => {
+    try {
+      // Fetch total users
+      const { count: usersCount } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+
+      // Fetch active (published) courses
+      const { count: coursesCount } = await supabase
+        .from('courses')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_published', true)
+
+      // Fetch total quizzes
+      const { count: quizzesCount } = await supabase
+        .from('quizzes')
+        .select('*', { count: 'exact', head: true })
+
+      // Calculate completion rate
+      const { count: totalEnrollments } = await supabase
+        .from('course_enrollments')
+        .select('*', { count: 'exact', head: true })
+
+      const { count: completedEnrollments } = await supabase
+        .from('course_enrollments')
+        .select('*', { count: 'exact', head: true })
+        .not('completed_at', 'is', null)
+
+      const completionRate = totalEnrollments && totalEnrollments > 0
+        ? Math.round((completedEnrollments || 0) / totalEnrollments * 100)
+        : 0
+
+      setStats({
+        totalUsers: usersCount || 0,
+        activeCourses: coursesCount || 0,
+        totalQuizzes: quizzesCount || 0,
+        completionRate
+      })
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchRecentActivity = async () => {
+    try {
+      const activities: RecentActivity[] = []
+
+      // Get recent users
+      const { data: recentUsers } = await supabase
+        .from('profiles')
+        .select('full_name, created_at')
+        .order('created_at', { ascending: false })
+        .limit(2)
+
+      recentUsers?.forEach(user => {
+        const timeAgo = getTimeAgo(user.created_at)
+        activities.push({
+          type: 'user',
+          message: 'New user registration',
+          details: `${user.full_name} joined ${timeAgo}`
+        })
+      })
+
+      // Get recently published courses
+      const { data: recentCourses } = await supabase
+        .from('courses')
+        .select('title, created_at')
+        .eq('is_published', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+
+      recentCourses?.forEach(course => {
+        activities.push({
+          type: 'course',
+          message: 'Course published',
+          details: `"${course.title}" is now live`
+        })
+      })
+
+      // Get recent quiz completions
+      const { data: recentAttempts } = await supabase
+        .from('quiz_attempts')
+        .select('score, completed_at')
+        .not('completed_at', 'is', null)
+        .order('completed_at', { ascending: false })
+        .limit(1)
+
+      if (recentAttempts && recentAttempts.length > 0) {
+        activities.push({
+          type: 'quiz',
+          message: 'Quiz completed',
+          details: `Score: ${recentAttempts[0].score}%`
+        })
+      }
+
+      setRecentActivity(activities.slice(0, 3))
+    } catch (error) {
+      console.error('Error fetching recent activity:', error)
+    }
+  }
+
+  const getTimeAgo = (dateString: string) => {
+    const now = new Date()
+    const date = new Date(dateString)
+    const diffMs = now.getTime() - date.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMins / 60)
+    const diffDays = Math.floor(diffHours / 24)
+
+    if (diffMins < 60) return `${diffMins} minutes ago`
+    if (diffHours < 24) return `${diffHours} hours ago`
+    return `${diffDays} days ago`
+  }
 
   return (
     <ProtectedRoute requiredRole="admin">
       <div className="min-h-screen bg-gray-50">
-        <nav className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <h1 className="text-xl font-semibold text-gray-900">
-                  Admin Dashboard
-                </h1>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">
-                  Welcome, {profile?.full_name}
-                </span>
-                <button
-                  onClick={async () => {
-                    try {
-                      await signOut()
-                    } catch (error) {
-                      console.error('Logout error:', error)
-                    }
-                  }}
-                  style={{
-                    color: '#6b7280',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: '0.5rem',
-                    borderRadius: '0.375rem',
-                    transition: 'color 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#374151'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = '#6b7280'}
-                  title="Logout"
-                >
-                  <LogOut size={20} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </nav>
-
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -66,7 +167,9 @@ export default function AdminDashboardPage() {
                         <dt className="text-sm font-medium text-gray-500 truncate">
                           Total Users
                         </dt>
-                        <dd className="text-lg font-medium text-gray-900">142</dd>
+                        <dd className="text-lg font-medium text-gray-900">
+                          {loading ? '...' : stats.totalUsers}
+                        </dd>
                       </dl>
                     </div>
                   </div>
@@ -84,7 +187,9 @@ export default function AdminDashboardPage() {
                         <dt className="text-sm font-medium text-gray-500 truncate">
                           Active Courses
                         </dt>
-                        <dd className="text-lg font-medium text-gray-900">24</dd>
+                        <dd className="text-lg font-medium text-gray-900">
+                          {loading ? '...' : stats.activeCourses}
+                        </dd>
                       </dl>
                     </div>
                   </div>
@@ -102,7 +207,9 @@ export default function AdminDashboardPage() {
                         <dt className="text-sm font-medium text-gray-500 truncate">
                           Total Quizzes
                         </dt>
-                        <dd className="text-lg font-medium text-gray-900">87</dd>
+                        <dd className="text-lg font-medium text-gray-900">
+                          {loading ? '...' : stats.totalQuizzes}
+                        </dd>
                       </dl>
                     </div>
                   </div>
@@ -120,7 +227,9 @@ export default function AdminDashboardPage() {
                         <dt className="text-sm font-medium text-gray-500 truncate">
                           Completion Rate
                         </dt>
-                        <dd className="text-lg font-medium text-gray-900">78%</dd>
+                        <dd className="text-lg font-medium text-gray-900">
+                          {loading ? '...' : `${stats.completionRate}%`}
+                        </dd>
                       </dl>
                     </div>
                   </div>
@@ -179,32 +288,37 @@ export default function AdminDashboardPage() {
                   <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
                     Recent Activity
                   </h3>
-                  <div className="space-y-3">
-                    <div className="border-l-4 border-green-400 pl-4">
-                      <p className="text-sm font-medium text-gray-900">
-                        New user registration
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        John Smith joined 2 hours ago
-                      </p>
+                  {loading ? (
+                    <div className="space-y-3">
+                      <div className="animate-pulse h-16 bg-gray-200 rounded"></div>
+                      <div className="animate-pulse h-16 bg-gray-200 rounded"></div>
+                      <div className="animate-pulse h-16 bg-gray-200 rounded"></div>
                     </div>
-                    <div className="border-l-4 border-blue-400 pl-4">
-                      <p className="text-sm font-medium text-gray-900">
-                        Course published
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        "Canadian Privacy Laws" is now live
-                      </p>
+                  ) : recentActivity.length > 0 ? (
+                    <div className="space-y-3">
+                      {recentActivity.map((activity, index) => (
+                        <div
+                          key={index}
+                          className={`border-l-4 pl-4 ${
+                            activity.type === 'user'
+                              ? 'border-green-400'
+                              : activity.type === 'course'
+                              ? 'border-blue-400'
+                              : 'border-yellow-400'
+                          }`}
+                        >
+                          <p className="text-sm font-medium text-gray-900">
+                            {activity.message}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {activity.details}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                    <div className="border-l-4 border-yellow-400 pl-4">
-                      <p className="text-sm font-medium text-gray-900">
-                        Quiz completed
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        85% average score on Safety Training
-                      </p>
-                    </div>
-                  </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">No recent activity</p>
+                  )}
                 </div>
               </div>
             </div>

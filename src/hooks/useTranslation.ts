@@ -14,34 +14,31 @@ export const TranslationContext = createContext<TranslationContextType | undefin
 export function useTranslation() {
   const context = useContext(TranslationContext)
   if (!context) {
-    // Fallback when not in provider context
+    // Fallback when not in provider context - default to French
     return {
-      language: 'en' as Language,
+      language: 'fr' as Language,
       setLanguage: () => {},
-      t: (key: TranslationKey) => translations.en[key] || key
+      t: (key: TranslationKey) => translations.fr[key] || key
     }
   }
   return context
 }
 
 export function getInitialLanguage(): Language {
-  if (typeof window === 'undefined') return 'en'
-  
+  if (typeof window === 'undefined') return 'fr'
+
   // Check localStorage first
   const stored = localStorage.getItem('language')
   if (stored && (stored === 'en' || stored === 'fr')) {
     return stored as Language
   }
-  
-  // Check browser language
-  const browserLang = navigator.language.toLowerCase()
-  if (browserLang.startsWith('fr')) return 'fr'
-  
-  return 'en'
+
+  // Default to French
+  return 'fr'
 }
 
 export function useTranslationState() {
-  const [language, setLanguageState] = useState<Language>('en')
+  const [language, setLanguageState] = useState<Language>('fr')
 
   useEffect(() => {
     setLanguageState(getInitialLanguage())
@@ -56,7 +53,7 @@ export function useTranslationState() {
   }
 
   const t = (key: TranslationKey): string => {
-    return translations[language][key] || translations.en[key] || key
+    return translations[language][key] || translations.fr[key] || key
   }
 
   return {
