@@ -65,15 +65,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     }
   ]
 
-  const progressNavItems = [
-    {
-      name: t('nav.certificates'),
-      href: '/certificates',
-      icon: '🏆',
-      description: 'View your earned certificates',
-      section: 'progress'
-    }
-  ]
+  const progressNavItems: any[] = []
 
   const adminNavItems = profile?.role === 'admin' ? [
     {
@@ -202,37 +194,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               })}
             </div>
 
-            {/* Progress Section */}
-            <div className="mb-8">
-              <h2 className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-3">
-                📊 Progress
-              </h2>
-              {progressNavItems.map((item) => {
-                const active = isActive(item.href)
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={onClose}
-                    className={`
-                      flex items-center p-3 rounded-lg transition-colors group border-l-4
-                      ${active
-                        ? 'bg-green-50 text-green-700 border-green-500'
-                        : 'text-gray-700 hover:bg-green-50 hover:text-green-700 border-transparent hover:border-green-300'
-                      }
-                    `}
-                  >
-                    <span className="text-xl mr-3">{item.icon}</span>
-                    <div className="flex-1">
-                      <div className="font-medium">{item.name}</div>
-                      <div className="text-xs text-gray-500 group-hover:text-green-600">
-                        {item.description}
-                      </div>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
 
             {/* Admin Navigation */}
             {adminNavItems.length > 0 && (

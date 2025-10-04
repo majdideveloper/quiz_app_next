@@ -155,7 +155,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('Starting logout process...')
       
-      // Clear the profile state immediately
+      // Set loading to true to prevent any redirects during logout
+      setLoading(true)
+      
+      // Sign out from Supabase first
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error('Logout error:', error)
+      }
+      
+      // Clear the profile state
       setProfile(null)
       setUser(null)
       
@@ -176,23 +185,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         })
       }
       
-      // Sign out from Supabase
-      const { error } = await supabase.auth.signOut()
-      if (error) {
-        console.error('Logout error:', error)
-      }
-      
       console.log('Logout completed, redirecting...')
       
-      // Use replace to prevent back button issues and add timestamp to force refresh
-      const timestamp = Date.now()
-      window.location.replace(`/?t=${timestamp}`)
+      // Small delay to ensure state is cleared, then redirect
+      setTimeout(() => {
+        const timestamp = Date.now()
+        window.location.replace(`/?t=${timestamp}`)
+      }, 100)
       
     } catch (error) {
       console.error('Error during logout:', error)
+      // Clear state even on error
+      setProfile(null)
+      setUser(null)
+      setLoading(false)
+      
       // Force redirect even if there's an error with timestamp
-      const timestamp = Date.now()
-      window.location.replace(`/?t=${timestamp}`)
+      setTimeout(() => {
+        const timestamp = Date.now()
+        window.location.replace(`/?t=${timestamp}`)
+      }, 100)
     }
   }
 

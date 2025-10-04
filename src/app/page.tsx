@@ -17,22 +17,26 @@ export default function Home() {
   const router = useRouter()
 
   useEffect(() => {
+    // Don't redirect during loading
     if (loading) {
       return
     }
 
+    // Don't redirect if no user (logged out)
     if (!user) {
       return
     }
 
+    // Don't redirect if no profile yet
     if (!profile) {
       return
     }
 
-    // Redirect authenticated users to their appropriate dashboard
+    // Only redirect if we're on the home page and have valid auth
     const currentPath = window.location.pathname
+    const isHomePage = currentPath === '/' || currentPath.startsWith('/?')
     
-    if (currentPath === '/') {
+    if (isHomePage && user && profile) {
       const targetPath = profile.role === 'admin' ? '/admin/dashboard' : '/dashboard'
       router.replace(targetPath)
     }

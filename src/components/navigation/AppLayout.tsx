@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import Link from 'next/link'
+import { UserCircle } from 'lucide-react'
 import Sidebar from './Sidebar'
 import BottomNavigation from './BottomNavigation'
 import SkipLink from '@/components/accessibility/SkipLink'
@@ -11,7 +12,6 @@ interface AppLayoutProps {
 }
 
 export default function AppLayout({ children }: AppLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
   const { user } = useAuth()
 
   if (!user) {
@@ -25,15 +25,14 @@ export default function AppLayout({ children }: AppLayoutProps) {
       {/* Mobile Header */}
       <div className="md:hidden bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="flex items-center justify-between px-4 py-3">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            aria-label="Open menu"
-          >
-            <span className="text-xl">☰</span>
-          </button>
           <h1 className="text-lg font-semibold text-gray-900">Learning Hub</h1>
-          <div className="w-10 h-10"></div> {/* Spacer for balance */}
+          <Link
+            href="/profile"
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="View profile"
+          >
+            <UserCircle size={28} className="text-gray-700" />
+          </Link>
         </div>
       </div>
 
@@ -41,14 +40,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
         {/* Desktop Sidebar - always visible on desktop */}
         <div className="hidden md:block w-80 flex-shrink-0">
           <Sidebar isOpen={true} onClose={() => {}} />
-        </div>
-
-        {/* Mobile Sidebar - only shows when hamburger is clicked */}
-        <div className="md:hidden">
-          <Sidebar 
-            isOpen={sidebarOpen} 
-            onClose={() => setSidebarOpen(false)} 
-          />
         </div>
 
         {/* Main Content */}

@@ -5,14 +5,10 @@ import { useParams, useRouter } from 'next/navigation'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase/client'
-import { Course, CourseEnrollment } from '@/types'
+import { Course } from '@/types'
 import Link from 'next/link'
-import { ArrowLeft, BookOpen, Clock, User, Calendar } from 'lucide-react'
+import { ArrowLeft, BookOpen, Calendar } from 'lucide-react'
 import CourseContentRenderer from '@/components/course/CourseContentRenderer'
-
-interface CourseWithEnrollment extends Course {
-  enrollment?: CourseEnrollment
-}
 
 export default function CourseDetailPage() {
   const { user } = useAuth()
@@ -20,9 +16,10 @@ export default function CourseDetailPage() {
   const router = useRouter()
   const courseId = params.id as string
 
-  const [course, setCourse] = useState<CourseWithEnrollment | null>(null)
+  const [course, setCourse] = useState<Course | null>(null)
   const [loading, setLoading] = useState(true)
-  const [enrolling, setEnrolling] = useState(false)
+  const [isMarked, setIsMarked] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   useEffect(() => {
     if (user && courseId) {
@@ -48,18 +45,7 @@ export default function CourseDetailPage() {
         return
       }
 
-      // Fetch enrollment status
-      const { data: enrollmentData } = await supabase
-        .from('course_enrollments')
-        .select('*')
-        .eq('user_id', user?.id)
-        .eq('course_id', courseId)
-        .single()
-
-      setCourse({
-        ...courseData,
-        enrollment: enrollmentData || undefined
-      })
+      setCourse(courseData)
     } catch (error) {
       console.error('Failed to fetch course:', error)
       router.push('/courses')
@@ -68,55 +54,52 @@ export default function CourseDetailPage() {
     }
   }
 
-  const handleEnroll = async () => {
-    if (!user || !course) return
-
-    try {
-      setEnrolling(true)
-      const { error } = await supabase
-        .from('course_enrollments')
-        .insert({
-          user_id: user.id,
-          course_id: course.id,
-          enrolled_at: new Date().toISOString(),
-          progress_percentage: 0
-        })
-
-      if (error) {
-        console.error('Failed to enroll:', error)
-        return
-      }
-
-      // Refresh course data to show enrollment
-      await fetchCourse()
-    } catch (error) {
-      console.error('Failed to enroll:', error)
-    } finally {
-      setEnrolling(false)
-    }
-  }
-
   const markAsComplete = async () => {
-    if (!user || !course || !course.enrollment) return
+    if (!user || !course || isMarked) return
 
     try {
-      const { error } = await supabase
-        .from('course_enrollments')
-        .update({
-          progress_percentage: 100,
-          completed_at: new Date().toISOString()
-        })
-        .eq('id', course.enrollment.id)
+      setIsMarked(true)
 
-      if (error) {
-        console.error('Failed to mark as complete:', error)
-        return
+      // Check if enrollment exists
+      const { data: existingEnrollment } = await supabase
+        .from('course_enrollments')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('course_id', course.id)
+        .single()
+
+      if (existingEnrollment) {
+        // Update existing enrollment
+        await supabase
+          .from('course_enrollments')
+          .update({
+            progress_percentage: 100,
+            completed_at: new Date().toISOString()
+          })
+          .eq('id', existingEnrollment.id)
+      } else {
+        // Create new enrollment as completed
+        await supabase
+          .from('course_enrollments')
+          .insert({
+            user_id: user.id,
+            course_id: course.id,
+            enrolled_at: new Date().toISOString(),
+            progress_percentage: 100,
+            completed_at: new Date().toISOString()
+          })
       }
 
-      // Refresh course data
-      await fetchCourse()
+      // Show success animation
+      setShowSuccess(true)
+
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setShowSuccess(false)
+      }, 3000)
     } catch (error) {
       console.error('Failed to mark as complete:', error)
+      setIsMarked(false)
     }
   }
 
@@ -164,110 +147,42 @@ export default function CourseDetailPage() {
     )
   }
 
-  const isEnrolled = !!course.enrollment
-  const isCompleted = course.enrollment?.completed_at !== null
-  const progressPercentage = course.enrollment?.progress_percentage || 0
-
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <div className="bg-white border-b border-gray-200">
           <div className="max-w-4xl mx-auto px-6 py-4">
-            <Link 
+            <Link
               href="/courses"
               className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors"
             >
               <ArrowLeft size={16} className="mr-2" />
               Back to Courses
             </Link>
-            
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  {course.title}
-                </h1>
-                <p className="text-lg text-gray-600 mb-4">
-                  {course.description}
-                </p>
-                
-                {/* Course Meta */}
-                <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500">
-                  <div className="flex items-center">
-                    <BookOpen size={16} className="mr-2" />
-                    <span className="px-2 py-1 bg-gray-100 rounded text-xs">
-                      {course.category}
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    <Calendar size={16} className="mr-2" />
-                    <span>Created {formatDate(course.created_at)}</span>
-                  </div>
+
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {course.title}
+              </h1>
+              <p className="text-lg text-gray-600 mb-4">
+                {course.description}
+              </p>
+
+              {/* Course Meta */}
+              <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <BookOpen size={16} className="mr-2" />
+                  <span className="px-2 py-1 bg-gray-100 rounded text-xs">
+                    {course.category}
+                  </span>
                 </div>
-              </div>
-
-              {/* Enrollment Actions */}
-              <div className="mt-6 md:mt-0 md:ml-6">
-                {!isEnrolled ? (
-                  <button
-                    onClick={handleEnroll}
-                    disabled={enrolling}
-                    className="w-full md:w-auto bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {enrolling ? 'Enrolling...' : 'Enroll in Course'}
-                  </button>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                        isCompleted 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-blue-100 text-blue-800'
-                      }`}>
-                        {isCompleted ? '✓ Completed' : '📚 In Progress'}
-                      </span>
-                    </div>
-                    
-                    {/* Progress Bar */}
-                    <div className="w-full">
-                      <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-                        <span>Progress</span>
-                        <span>{progressPercentage}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className={`h-2 rounded-full transition-all duration-300 ${
-                            isCompleted ? 'bg-green-500' : 'bg-blue-500'
-                          }`}
-                          style={{ width: `${progressPercentage}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {!isCompleted && (
-                      <button
-                        onClick={markAsComplete}
-                        className="w-full md:w-auto bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
-                      >
-                        Mark as Complete
-                      </button>
-                    )}
-                  </div>
-                )}
+                <div className="flex items-center">
+                  <Calendar size={16} className="mr-2" />
+                  <span>Created {formatDate(course.created_at)}</span>
+                </div>
               </div>
             </div>
-
-            {/* Enrollment Info */}
-            {course.enrollment && (
-              <div className="mt-6 pt-6 border-t border-gray-200 text-sm text-gray-500">
-                <div className="flex flex-wrap gap-4">
-                  <span>Enrolled: {formatDate(course.enrollment.enrolled_at)}</span>
-                  {course.enrollment.completed_at && (
-                    <span>Completed: {formatDate(course.enrollment.completed_at)}</span>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
@@ -277,6 +192,38 @@ export default function CourseDetailPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Course Content</h2>
             <div className="prose prose-gray max-w-none">
               <CourseContentRenderer content={course.content} />
+            </div>
+
+            {/* Mark as Read Button at Bottom */}
+            <div className="mt-8 pt-6 border-t border-gray-200 relative">
+              {/* Success Message Animation */}
+              {showSuccess && (
+                <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-bounce">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">✓</span>
+                    <span className="font-medium">Marked as read!</span>
+                  </div>
+                </div>
+              )}
+
+              <button
+                onClick={markAsComplete}
+                disabled={isMarked}
+                className={`w-full px-6 py-3 rounded-lg font-medium transition-all ${
+                  isMarked
+                    ? 'bg-green-500 text-white cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                {isMarked ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="text-xl">✓</span>
+                    Marked as Read
+                  </span>
+                ) : (
+                  'Mark as Read'
+                )}
+              </button>
             </div>
           </div>
         </div>

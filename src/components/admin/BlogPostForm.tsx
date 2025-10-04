@@ -17,7 +17,7 @@ const formSchema = z.object({
   content: z.string().min(10, 'Content must be at least 10 characters'),
   category: z.string().min(1, 'Category is required'),
   image_url: z.string().optional(),
-  published: z.boolean().optional().default(false), // Optional since we're not storing it yet
+  published: z.boolean().default(false),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -64,10 +64,8 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
         return
       }
 
-      // Exclude published field since it doesn't exist in database yet
-      const { published, ...dataWithoutPublished } = data
       const postData = { 
-        ...dataWithoutPublished, 
+        ...data, 
         author_id: user.id
       }
 
@@ -260,18 +258,70 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
           )}
         </div>
 
-        {/* Publishing Note */}
-        <div className="bg-blue-50 rounded-lg p-4 space-y-2">
-          <div className="flex items-center gap-2">
-            <Globe className="w-5 h-5 text-blue-600" />
-            <h3 className="text-sm font-medium text-blue-900">Publishing Status</h3>
+        {/* Publishing Status */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Globe className="w-5 h-5 text-gray-600" />
+              <h3 className="text-sm font-medium text-gray-700">Publishing Status</h3>
+            </div>
           </div>
-          <p className="text-sm text-blue-800">
-            All blog posts are currently published and publicly visible once created.
-          </p>
-          <p className="text-xs text-blue-600">
-            Draft functionality will be available after the next system update.
-          </p>
+          
+          <Controller
+            name="published"
+            control={control}
+            render={({ field }) => (
+              <div className="space-y-3">
+                <div 
+                  className={`rounded-lg p-4 border-2 cursor-pointer transition-all ${
+                    !field.value 
+                      ? 'border-amber-200 bg-amber-50' 
+                      : 'border-gray-200 bg-gray-50'
+                  }`}
+                  onClick={() => field.onChange(false)}
+                >
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      checked={!field.value}
+                      onChange={() => field.onChange(false)}
+                      className="w-4 h-4 text-amber-600 border-gray-300 focus:ring-amber-500"
+                    />
+                    <div>
+                      <div className="font-medium text-gray-900">Save as Draft</div>
+                      <div className="text-sm text-gray-600">
+                        Only visible to admins. You can publish it later.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div 
+                  className={`rounded-lg p-4 border-2 cursor-pointer transition-all ${
+                    field.value 
+                      ? 'border-green-200 bg-green-50' 
+                      : 'border-gray-200 bg-gray-50'
+                  }`}
+                  onClick={() => field.onChange(true)}
+                >
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      checked={field.value}
+                      onChange={() => field.onChange(true)}
+                      className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
+                    />
+                    <div>
+                      <div className="font-medium text-gray-900">Publish Now</div>
+                      <div className="text-sm text-gray-600">
+                        Make this post visible to all visitors immediately.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          />
         </div>
 
         {/* Action Buttons */}
@@ -296,7 +346,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
               ) : (
                 <Save className="w-4 h-4" />
               )}
-              {post ? 'Update Post' : 'Publish Post'}
+              {post ? 'Update Post' : (watch('published') ? 'Publish Post' : 'Save Draft')}
             </button>
           </div>
         </div>

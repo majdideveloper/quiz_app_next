@@ -6,7 +6,6 @@ interface UserStats {
   totalQuizzesTaken: number
   averageScore: number
   totalTimeSpent: number
-  certificatesEarned: number
 }
 
 interface UserStatsCardsProps {
@@ -52,19 +51,11 @@ export default function UserStatsCards({ stats }: UserStatsCardsProps) {
       icon: '⏱️',
       color: 'bg-purple-50 text-purple-700',
       progress: null
-    },
-    {
-      title: 'Certificates',
-      value: stats.certificatesEarned,
-      subtitle: 'Earned',
-      icon: '🏆',
-      color: 'bg-yellow-50 text-yellow-700',
-      progress: null
     }
   ]
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {statsCards.map((card, index) => (
         <div key={index} className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">

@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase/client'
 import { Post } from '@/types'
 import Link from 'next/link'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
-import { Plus, Edit, Trash2 } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react'
 
 export default function AdminBlogPage() {
   const [posts, setPosts] = useState<Post[]>([])
@@ -51,6 +51,23 @@ export default function AdminBlogPage() {
     }
   }
 
+  const togglePublished = async (postId: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .update({ published: !currentStatus })
+        .eq('id', postId)
+      
+      if (error) {
+        console.error('Failed to update post status:', error)
+        return
+      }
+      fetchPosts()
+    } catch (error) {
+      console.error('Failed to update post status:', error)
+    }
+  }
+
   return (
     <ProtectedRoute requiredRole="admin">
       <div className="min-h-screen bg-gray-50">
@@ -73,6 +90,7 @@ export default function AdminBlogPage() {
                   <tr>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
                     <th scope="col" className="relative px-6 py-3">
                       <span className="sr-only">Actions</span>
@@ -82,7 +100,7 @@ export default function AdminBlogPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {loading ? (
                     <tr>
-                      <td colSpan={4} className="text-center py-4">Loading...</td>
+                      <td colSpan={5} className="text-center py-4">Loading...</td>
                     </tr>
                   ) : posts.map(post => (
                     <tr key={post.id}>
@@ -93,15 +111,37 @@ export default function AdminBlogPage() {
                         <div className="text-sm text-gray-500">{post.category}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          post.published 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-amber-100 text-amber-800'
+                        }`}>
+                          {post.published ? 'Published' : 'Draft'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-500">{new Date(post.created_at).toLocaleDateString()}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <Link href={`/admin/blog/edit/${post.id}`} className="text-blue-600 hover:text-blue-900 mr-4">
-                          <Edit size={16} />
-                        </Link>
-                        <button onClick={() => deletePost(post.id)} className="text-red-600 hover:text-red-900">
-                          <Trash2 size={16} />
-                        </button>
+                        <div className="flex items-center justify-end gap-2">
+                          <button 
+                            onClick={() => togglePublished(post.id, post.published)}
+                            className={`${
+                              post.published 
+                                ? 'text-amber-600 hover:text-amber-900' 
+                                : 'text-green-600 hover:text-green-900'
+                            }`}
+                            title={post.published ? 'Unpublish' : 'Publish'}
+                          >
+                            {post.published ? <EyeOff size={16} /> : <Eye size={16} />}
+                          </button>
+                          <Link href={`/admin/blog/edit/${post.id}`} className="text-blue-600 hover:text-blue-900">
+                            <Edit size={16} />
+                          </Link>
+                          <button onClick={() => deletePost(post.id)} className="text-red-600 hover:text-red-900">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

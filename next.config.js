@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Fix workspace root warning
+  outputFileTracingRoot: process.cwd(),
+  
   images: {
     remotePatterns: [
       // Local Supabase development

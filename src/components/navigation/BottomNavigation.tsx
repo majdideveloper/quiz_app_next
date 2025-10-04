@@ -10,6 +10,12 @@ export default function BottomNavigation() {
 
   const navItems = [
     {
+      name: t('nav.dashboard'),
+      href: '/dashboard',
+      icon: '🏠',
+      activeIcon: '🏠'
+    },
+    {
       name: t('nav.courses'),
       href: '/courses',
       icon: '📚',
@@ -26,18 +32,6 @@ export default function BottomNavigation() {
       href: '/blog',
       icon: '📰',
       activeIcon: '📰'
-    },
-    {
-      name: t('nav.certificates'),
-      href: '/certificates',
-      icon: '🏆',
-      activeIcon: '🏆'
-    },
-    {
-      name: t('nav.dashboard'),
-      href: '/dashboard',
-      icon: '🏠',
-      activeIcon: '🏠'
     }
   ]
 

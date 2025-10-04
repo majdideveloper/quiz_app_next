@@ -60,31 +60,6 @@ export default function CoursesPage() {
     }
   }
 
-  const handleEnroll = async (courseId: string) => {
-    if (!user) return
-
-    try {
-      const { error } = await supabase
-        .from('course_enrollments')
-        .insert({
-          user_id: user.id,
-          course_id: courseId,
-          enrolled_at: new Date().toISOString(),
-          progress_percentage: 0
-        })
-
-      if (error) {
-        console.error('Failed to enroll:', error)
-        return
-      }
-
-      // Refresh courses to show enrollment
-      await fetchCourses()
-    } catch (error) {
-      console.error('Failed to enroll:', error)
-    }
-  }
-
   const filteredCourses = courses.filter(course => {
     const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          course.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -181,10 +156,10 @@ export default function CoursesPage() {
           {filteredCourses.length > 0 ? (
             <div className="space-y-4">
               {filteredCourses.map((course) => (
-                <CourseCard 
-                  key={course.id} 
-                  course={course} 
-                  onEnroll={() => handleEnroll(course.id)}
+                <CourseCard
+                  key={course.id}
+                  course={course}
+                  onEnroll={() => {}}
                   listView={true}
                 />
               ))}

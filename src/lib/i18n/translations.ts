@@ -12,7 +12,6 @@ export const translations = {
     'canadianCompliant': 'Canadian Compliant',
     'freeTrialText': '14-day free trial',
     'noSetupFees': 'No setup fees',
-    'instantCertificates': 'Instant certificates',
     'startFreeTrial': 'Start Free Trial',
     'watchDemo': 'Watch Demo',
     'trustedBy': 'Trusted by leading Canadian companies',
@@ -24,8 +23,6 @@ export const translations = {
     'advancedQuizBuilderDesc': 'Create engaging quizzes with multiple question types, rich media, and advanced features.',
     'powerfulAnalytics': 'Powerful Analytics',
     'powerfulAnalyticsDesc': 'Track progress, measure performance, and generate insights with detailed analytics.',
-    'instantCertification': 'Instant Certification',
-    'instantCertificationDesc': 'Automated certificate generation with digital verification and compliance tracking.',
     'bilingualSupport': 'Bilingual Support',
     'bilingualSupportDesc': 'Native English and French support with cultural adaptation for Canadian audiences.',
     'accessibilityFirst': 'Accessibility First',
@@ -111,8 +108,6 @@ export const translations = {
     'faqAnswer1': 'QuizPro is built with Canadian requirements in mind, including bilingual support, PIPEDA compliance, and data residency options.',
     'faqQuestion2': 'What types of questions can I create?',
     'faqAnswer2': 'Multiple choice, true/false, short answer, essay, matching, drag & drop, and more. All with rich media support.',
-    'faqQuestion3': 'How does the certificate system work?',
-    'faqAnswer3': 'Certificates are automatically generated upon quiz completion with passing scores. Each certificate includes digital verification.',
     'faqQuestion4': 'Can I integrate with my existing systems?',
     'faqAnswer4': 'Yes, we offer API access, SSO integration, and custom integrations for enterprise customers.',
     'faqQuestion5': 'What accessibility features are included?',
@@ -175,7 +170,6 @@ export const translations = {
     'nav.dashboard': 'Dashboard',
     'nav.courses': 'Courses',
     'nav.quizzes': 'Quizzes',
-    'nav.certificates': 'Certificates',
     'nav.profile': 'Profile',
     'nav.logout': 'Logout',
     
@@ -187,8 +181,6 @@ export const translations = {
     'dashboard.stats.quizzes': 'Quizzes Taken',
     'dashboard.stats.avgScore': 'avg score',
     'dashboard.stats.timeSpent': 'Time Spent',
-    'dashboard.stats.certificates': 'Certificates',
-    'dashboard.stats.earned': 'Earned',
     
     // Courses
     'courses.title': 'Available Courses',
@@ -211,15 +203,7 @@ export const translations = {
     'quiz.passed': 'Congratulations! You passed!',
     'quiz.failed': "You didn't pass this time, but you can try again.",
     'quiz.tryAgain': 'Try Again',
-    
-    // Certificates
-    'certificates.title': 'My Certificates',
-    'certificates.view': 'View Certificate',
-    'certificates.download': 'Download',
-    'certificates.verify': 'Verify Certificate',
-    'certificates.none': 'No Certificates Yet',
-    'certificates.earnMore': 'Complete courses and pass quizzes to earn certificates',
-    
+
     // Common
     'common.loading': 'Loading...',
     'common.error': 'Error',
@@ -246,7 +230,6 @@ export const translations = {
     'canadianCompliant': 'Conforme au Canada',
     'freeTrialText': 'Essai gratuit de 14 jours',
     'noSetupFees': 'Aucun frais de configuration',
-    'instantCertificates': 'Certificats instantanés',
     'startFreeTrial': 'Commencer l\'essai gratuit',
     'watchDemo': 'Voir la démo',
     'trustedBy': 'Approuvé par les entreprises canadiennes leaders',
@@ -258,8 +241,6 @@ export const translations = {
     'advancedQuizBuilderDesc': 'Créez des quiz engageants avec plusieurs types de questions, médias riches et fonctionnalités avancées.',
     'powerfulAnalytics': 'Analyses puissantes',
     'powerfulAnalyticsDesc': 'Suivez les progrès, mesurez les performances et générez des insights avec des analyses détaillées.',
-    'instantCertification': 'Certification instantanée',
-    'instantCertificationDesc': 'Génération automatique de certificats avec vérification numérique et suivi de conformité.',
     'bilingualSupport': 'Support bilingue',
     'bilingualSupportDesc': 'Support natif anglais et français avec adaptation culturelle pour les audiences canadiennes.',
     'accessibilityFirst': 'Accessibilité d\'abord',
@@ -345,8 +326,6 @@ export const translations = {
     'faqAnswer1': 'QuizPro est conçu avec les exigences canadiennes à l\'esprit, incluant le support bilingue, la conformité PIPEDA et les options de résidence des données.',
     'faqQuestion2': 'Quels types de questions puis-je créer?',
     'faqAnswer2': 'Choix multiple, vrai/faux, réponse courte, essai, correspondance, glisser-déposer, et plus. Tous avec support de médias riches.',
-    'faqQuestion3': 'Comment fonctionne le système de certificats?',
-    'faqAnswer3': 'Les certificats sont générés automatiquement lors de la complétion de quiz avec des scores de passage. Chaque certificat inclut une vérification numérique.',
     'faqQuestion4': 'Puis-je intégrer avec mes systèmes existants?',
     'faqAnswer4': 'Oui, nous offrons l\'accès API, l\'intégration SSO et des intégrations personnalisées pour les clients d\'entreprise.',
     'faqQuestion5': 'Quelles fonctionnalités d\'accessibilité sont incluses?',
@@ -409,7 +388,6 @@ export const translations = {
     'nav.dashboard': 'Tableau de bord',
     'nav.courses': 'Cours',
     'nav.quizzes': 'Quiz',
-    'nav.certificates': 'Certificats',
     'nav.profile': 'Profil',
     'nav.logout': 'Déconnexion',
     
@@ -421,8 +399,6 @@ export const translations = {
     'dashboard.stats.quizzes': 'Quiz effectués',
     'dashboard.stats.avgScore': 'score moyen',
     'dashboard.stats.timeSpent': 'Temps passé',
-    'dashboard.stats.certificates': 'Certificats',
-    'dashboard.stats.earned': 'Gagnés',
     
     // Courses
     'courses.title': 'Cours disponibles',
@@ -445,15 +421,7 @@ export const translations = {
     'quiz.passed': 'Félicitations ! Vous avez réussi !',
     'quiz.failed': "Vous n'avez pas réussi cette fois, mais vous pouvez réessayer.",
     'quiz.tryAgain': 'Réessayer',
-    
-    // Certificates
-    'certificates.title': 'Mes certificats',
-    'certificates.view': 'Voir le certificat',
-    'certificates.download': 'Télécharger',
-    'certificates.verify': 'Vérifier le certificat',
-    'certificates.none': 'Aucun certificat pour le moment',
-    'certificates.earnMore': 'Terminez des cours et réussissez des quiz pour obtenir des certificats',
-    
+
     // Common
     'common.loading': 'Chargement...',
     'common.error': 'Erreur',

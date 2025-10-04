@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { useCertificates } from '@/hooks/useCertificates'
 import { supabase } from '@/lib/supabase/client'
 import { Quiz, Question, QuizAttempt } from '@/types'
 import QuizTimer from './QuizTimer'
@@ -17,7 +16,6 @@ interface QuizTakingWithExplanationsProps {
 
 export default function QuizTakingWithExplanations({ quiz, questions, onComplete }: QuizTakingWithExplanationsProps) {
   const { user } = useAuth()
-  const { issueCertificate } = useCertificates()
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [showExplanations, setShowExplanations] = useState<Record<string, boolean>>({})
@@ -126,7 +124,6 @@ export default function QuizTakingWithExplanations({ quiz, questions, onComplete
       // Update course progress if quiz is passed
       if (score >= quiz.passing_score) {
         await updateCourseProgress()
-        await handleCertificateIssuance(score)
       }
 
       onComplete(data)
@@ -156,14 +153,6 @@ export default function QuizTakingWithExplanations({ quiz, questions, onComplete
           completed_at: new Date().toISOString()
         })
         .eq('id', enrollment.id)
-    }
-  }
-
-  const handleCertificateIssuance = async (score: number) => {
-    try {
-      await issueCertificate(quiz.course_id, score)
-    } catch (error) {
-      console.error('Failed to issue certificate:', error)
     }
   }
 

@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   creator: 'QuizPro',
   publisher: 'QuizPro',
   robots: 'index, follow',
+  metadataBase: new URL('https://quizpro.ca'),
   alternates: {
     canonical: 'https://quizpro.ca'
   },
@@ -39,9 +40,13 @@ export const metadata: Metadata = {
     images: ['/twitter-image.jpg'],
     creator: '@quizpro_ca'
   },
-  viewport: 'width=device-width, initial-scale=1',
-  themeColor: '#2563eb',
   category: 'technology'
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#2563eb'
 }
 
 export default function RootLayout({

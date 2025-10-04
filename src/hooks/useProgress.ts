@@ -24,7 +24,6 @@ interface UserStats {
   totalQuizzesTaken: number
   averageScore: number
   totalTimeSpent: number
-  certificatesEarned: number
 }
 
 export function useProgress() {
@@ -126,8 +125,7 @@ export function useProgress() {
         completedCourses: progressData.filter(p => p.isCompleted).length,
         totalQuizzesTaken: (attempts || []).filter(a => a.completed_at).length,
         averageScore: calculateOverallAverageScore(attempts || []),
-        totalTimeSpent: (attempts || []).reduce((total, attempt) => total + (attempt.time_taken || 0), 0),
-        certificatesEarned: progressData.filter(p => p.isCompleted && p.averageScore >= 80).length
+        totalTimeSpent: (attempts || []).reduce((total, attempt) => total + (attempt.time_taken || 0), 0)
       }
 
       setUserStats(stats)
