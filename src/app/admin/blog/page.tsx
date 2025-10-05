@@ -124,8 +124,8 @@ export default function AdminBlogPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end gap-2">
-                          <button 
-                            onClick={() => togglePublished(post.id, post.published)}
+                          <button
+                            onClick={() => togglePublished(post.id, post.published ?? false)}
                             className={`${
                               post.published 
                                 ? 'text-amber-600 hover:text-amber-900' 

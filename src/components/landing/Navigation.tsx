@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useTranslation } from '@/hooks/useTranslation'
-import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -43,9 +42,8 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Desktop CTA & Language */}
+          {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
-            <LanguageSwitcher />
             <Link
               href="/auth/login"
               className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
@@ -61,8 +59,7 @@ export default function Navigation() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center space-x-2">
-            <LanguageSwitcher />
+          <div className="md:hidden">
             <button
               type="button"
               className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900"

@@ -5,7 +5,7 @@ import AdminAnalyticsDashboard from '@/components/admin/AdminAnalyticsDashboard'
 
 export default function AdminAnalyticsPage() {
   return (
-    <ProtectedRoute allowedRoles={['admin']}>
+    <ProtectedRoute requiredRole="admin">
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="mb-8">
@@ -14,7 +14,7 @@ export default function AdminAnalyticsPage() {
               Comprehensive insights into course performance and user engagement
             </p>
           </div>
-          
+
           <AdminAnalyticsDashboard />
         </div>
       </div>

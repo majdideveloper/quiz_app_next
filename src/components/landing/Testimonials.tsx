@@ -86,7 +86,7 @@ export default function Testimonials() {
               </div>
 
               <blockquote className="text-gray-700 mb-6">
-                "{testimonial.content}"
+                &ldquo;{testimonial.content}&rdquo;
               </blockquote>
 
               <div className="flex items-center">
@@ -155,7 +155,7 @@ export default function Testimonials() {
               </div>
 
               <blockquote className="text-gray-700 italic mb-6">
-                "QuizPro helped us modernize our entire training approach. The results speak for themselves - higher engagement, better retention, and significant cost savings."
+                &ldquo;QuizPro helped us modernize our entire training approach. The results speak for themselves - higher engagement, better retention, and significant cost savings.&rdquo;
               </blockquote>
 
               <div className="flex items-center">

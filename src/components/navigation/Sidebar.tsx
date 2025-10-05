@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useTranslation } from '@/hooks/useTranslation'
-import LanguageSwitcher from '@/components/ui/LanguageSwitcher'
 
 interface SidebarProps {
   isOpen: boolean
@@ -36,7 +35,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       name: t('nav.dashboard'),
       href: '/dashboard',
       icon: '🏠',
-      description: 'View your learning progress',
+      description: 'Voir votre progression d\'apprentissage',
       section: 'general'
     }
   ]
@@ -46,21 +45,21 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       name: t('nav.courses'),
       href: '/courses',
       icon: '📚',
-      description: 'Browse and enroll in courses',
+      description: 'Parcourir et s\'inscrire aux cours',
       section: 'learning'
     },
     {
       name: t('nav.quizzes'),
       href: '/quizzes',
       icon: '📝',
-      description: 'Take quizzes and test knowledge',
+      description: 'Passer des quiz et tester vos connaissances',
       section: 'learning'
     },
     {
       name: 'Blog',
       href: '/blog',
       icon: '📰',
-      description: 'Read our latest articles',
+      description: 'Lire nos derniers articles',
       section: 'learning'
     }
   ]
@@ -69,22 +68,22 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const adminNavItems = profile?.role === 'admin' ? [
     {
-      name: 'Admin Dashboard',
+      name: 'Tableau de bord admin',
       href: '/admin/dashboard',
       icon: '⚙️',
-      description: 'Manage courses and users'
+      description: 'Gérer les cours et les utilisateurs'
     },
     {
-      name: 'Analytics',
+      name: 'Analyses',
       href: '/admin/analytics',
       icon: '📊',
-      description: 'View performance analytics'
+      description: 'Voir les analyses de performance'
     },
     {
-      name: 'FAQ Management',
+      name: 'Gestion FAQ',
       href: '/admin/faqs',
       icon: '❓',
-      description: 'Manage landing page FAQs'
+      description: 'Gérer les FAQ de la page d\'accueil'
     }
   ] : []
 
@@ -109,9 +108,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Learning Hub</h1>
+                <h1 className="text-xl font-bold text-gray-900">Centre d&apos;apprentissage</h1>
                 <p className="text-sm text-gray-600 mt-1">
-                  Welcome, {profile?.full_name}
+                  Bienvenue, {profile?.full_name}
                 </p>
               </div>
               <button
@@ -121,11 +120,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 ✕
               </button>
             </div>
-            
-            {/* Language Switcher */}
-            <div className="mt-4">
-              <LanguageSwitcher />
-            </div>
           </div>
 
           {/* Navigation */}
@@ -133,7 +127,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             {/* Dashboard */}
             <div className="mb-8">
               <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                Overview
+                Vue d&apos;ensemble
               </h2>
               {mainNavItems.map((item) => {
                 const active = isActive(item.href)
@@ -165,7 +159,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             {/* Learning Section */}
             <div className="mb-8">
               <h2 className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-3">
-                📖 Learning
+                📖 Apprentissage
               </h2>
               {learningNavItems.map((item) => {
                 const active = isActive(item.href)

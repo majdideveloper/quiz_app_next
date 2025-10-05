@@ -184,7 +184,7 @@ export default function QuizTakingWithExplanations({ quiz, questions, onComplete
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">No Questions Available</h2>
-          <p className="text-gray-600">This quiz doesn't have any questions yet.</p>
+          <p className="text-gray-600">This quiz doesn&apos;t have any questions yet.</p>
         </div>
       </div>
     )

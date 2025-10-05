@@ -50,7 +50,7 @@ export default function NewQuizPage() {
     try {
       const { data, error } = await supabase
         .from('courses')
-        .select('id, title')
+        .select('*')
         .eq('is_published', true)
         .order('title')
 
@@ -100,11 +100,12 @@ export default function NewQuizPage() {
     }
 
     const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
-    const updatedQuestions = [...questions]
-    
+    const updatedQuestions: Question[] = [...questions]
+
     // Swap questions
-    [updatedQuestions[currentIndex], updatedQuestions[newIndex]] = 
-    [updatedQuestions[newIndex], updatedQuestions[currentIndex]]
+    const temp = updatedQuestions[currentIndex]
+    updatedQuestions[currentIndex] = updatedQuestions[newIndex]
+    updatedQuestions[newIndex] = temp
     
     // Update order indices
     updatedQuestions[currentIndex].order_index = currentIndex
