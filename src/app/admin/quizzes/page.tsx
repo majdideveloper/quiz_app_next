@@ -253,7 +253,7 @@ export default function AdminQuizzesPage() {
                         </div>
                       </td>
                       <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: '#6b7280' }}>
-                        {quiz.courses?.title || 'Standalone'}
+                        {quiz.course?.title || 'Standalone'}
                       </td>
                       <td style={{ padding: '1rem 1.5rem' }}>
                         <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
