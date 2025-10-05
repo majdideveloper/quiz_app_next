@@ -54,7 +54,7 @@ export default function AdminQuizzesPage() {
     try {
       const { data, error } = await supabase
         .from('courses')
-        .select('id, title')
+        .select('*')
         .eq('is_published', true)
         .order('title')
 
