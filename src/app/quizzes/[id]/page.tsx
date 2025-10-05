@@ -58,7 +58,7 @@ export default function QuizPage() {
         .from('quiz_attempts')
         .select('*')
         .eq('quiz_id', id)
-        .eq('user_id', user.id)
+        .eq('user_id', user?.id)
         .order('started_at', { ascending: false })
         .limit(1)
 
