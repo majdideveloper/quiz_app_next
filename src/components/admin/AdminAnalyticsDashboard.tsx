@@ -208,7 +208,7 @@ export default function AdminAnalyticsDashboard() {
       .order('completed_at', { ascending: false })
       .limit(10)
 
-    return activities?.map(activity => ({
+    return activities?.map((activity: any) => ({
       id: activity.id,
       userName: activity.profiles?.full_name || 'Unknown User',
       quizName: activity.quizzes?.title || 'Unknown Quiz',
